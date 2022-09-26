@@ -9,7 +9,7 @@ local cost = ARGV[4]
 
 local emission_interval = period / rate
 local increment = emission_interval * cost
-local burst_offset = emission_interval * burst
+local delay_variation_tolerance = emission_interval * (burst + 1)
 local now = redis.call("TIME")
 
 -- redis returns time as an array containing two integers: seconds of the epoch
@@ -32,7 +32,7 @@ end
 
 local new_tat = math.max(tat, now) + increment
 
-local allow_at = new_tat - burst_offset
+local allow_at = new_tat - delay_variation_tolerance
 local diff = now - allow_at
 
 local limited

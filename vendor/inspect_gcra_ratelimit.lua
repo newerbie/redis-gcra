@@ -4,7 +4,7 @@ local rate = ARGV[2]
 local period = ARGV[3]
 
 local emission_interval = period / rate
-local burst_offset = emission_interval * burst
+local delay_variation_tolerance = emission_interval * (burst + 1)
 local now = redis.call("TIME")
 
 -- redis returns time as an array containing two integers: seconds of the epoch
@@ -25,7 +25,7 @@ else
   tat = tonumber(tat)
 end
 
-local allow_at = math.max(tat, now) - burst_offset
+local allow_at = math.max(tat, now) - delay_variation_tolerance
 local diff = now - allow_at
 
 local remaining = math.floor(diff / emission_interval + 0.5) -- poor man's round
